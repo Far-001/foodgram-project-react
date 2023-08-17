@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # ---------------------------
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
+    'djoser'
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,34 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 6,
+}
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'recipe': ['api.permissions.AuthorStaffOrReadOnly'],
+        'recipe_list': ['api.permissions.AuthorStaffOrReadOnly'],
+        'user': 'api.serializers.MyUserSerializer',
+        'user_list': 'api.serializers.MyUserSerializer',
+        'current_user': 'api.serializers.MyUserSerializer',
+
+    },
+    'PERMISSIONS': {
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'create_user': ['rest_framework.permissions.AllowAny']
+    }
+
+}
