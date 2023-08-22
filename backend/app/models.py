@@ -15,7 +15,7 @@ class Ingredient(models.Model):
         db_index=True,
         help_text='Введите название ингредиента'
     )
-    units = models.CharField(
+    measurement_unit = models.CharField(
         'Единица измерения',
         max_length=50,
         help_text='Введите единицу измерения'
@@ -27,13 +27,13 @@ class Ingredient(models.Model):
         ordering = ('name',)
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'units'],
+                fields=['name', 'measurement_unit'],
                 name='unique_ingredient'
             )
         ]
 
     def __str__(self):
-        return f'{self.name}, {self.units}'
+        return f'{self.name}, {self.measurement_unit}'
 
 
 class Tag(models.Model):
@@ -120,7 +120,7 @@ class Recipe(models.Model):
         default='static/images/DefaultCardImg.png',
         help_text='Добавьте изображение'
     )
-    description = models.TextField(
+    text = models.TextField(
         'Описание',
         max_length=1000,
         help_text='Введите описание рецепта'
@@ -193,7 +193,7 @@ class Amount(models.Model):
 
     def __str__(self):
         return (f'{self.recipe.name}: {self.ingredient.name}'
-                f'{self.amount}, {self.ingredient.units}')
+                f'{self.amount}, {self.ingredient.measurement_unit}')
 
 
 class Favorite(models.Model):
@@ -230,13 +230,13 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='shopcart',
+        related_name='shopcarts',
         verbose_name='Пользователь'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='shopcart',
+        related_name='shopcarts',
         verbose_name='Рецепты'
     )
 

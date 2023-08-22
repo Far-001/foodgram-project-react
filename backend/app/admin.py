@@ -50,7 +50,7 @@ class RecipeAdmin(ModelAdmin):
 
 class IngredientAdmin(ModelAdmin):
     """Кастомное отображение модели Ingredient."""
-    list_display = ('name', 'units')
+    list_display = ('name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name',)
 

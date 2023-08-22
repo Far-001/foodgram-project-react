@@ -22,7 +22,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -34,13 +34,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # ---------------------------
+    'djoser',
+    'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
-    # ---------------------------
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
-    'djoser'
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -123,7 +123,11 @@ AUTH_USER_MODEL = 'users.MyUser'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -139,15 +143,13 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 6,
+    'PAGE_SIZE': 4,
 }
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
     'SERIALIZERS': {
-        'recipe': ['api.permissions.AuthorStaffOrReadOnly'],
-        'recipe_list': ['api.permissions.AuthorStaffOrReadOnly'],
         'user': 'api.serializers.MyUserSerializer',
         'user_list': 'api.serializers.MyUserSerializer',
         'current_user': 'api.serializers.MyUserSerializer',
@@ -156,7 +158,9 @@ DJOSER = {
     'PERMISSIONS': {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
         'user_list': ['rest_framework.permissions.AllowAny'],
-        'create_user': ['rest_framework.permissions.AllowAny']
+        'create_user': ['rest_framework.permissions.AllowAny'],
+        'recipe': ['api.permissions.AuthorStaffOrReadOnly'],
+        'recipe_list': ['api.permissions.AuthorStaffOrReadOnly'],
     }
 
 }
