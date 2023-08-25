@@ -5,18 +5,19 @@ from django.db import models
 User = get_user_model()
 
 RECIPE_SHOTNAME = 20
+MAX_NAME_LEN = 100
 
 
 class Ingredient(models.Model):
     """Модель ингредиента."""
     name = models.CharField(
-        'Название',
-        max_length=100,
+        'название',
+        max_length=MAX_NAME_LEN,
         db_index=True,
         help_text='Введите название ингредиента'
     )
     measurement_unit = models.CharField(
-        'Единица измерения',
+        'единица измерения',
         max_length=50,
         help_text='Введите единицу измерения'
     )
@@ -42,13 +43,13 @@ class Tag(models.Model):
     Сортировка по имени тега
     """
     name = models.CharField(
-        'Название',
-        max_length=100,
+        'название',
+        max_length=MAX_NAME_LEN,
         db_index=True,
         unique=True
     )
     color = models.CharField(
-        'Цветовой HEX-код',
+        'цветовой HEX-код',
         max_length=7,
         unique=True,
         default='#00ff8f',
@@ -60,8 +61,8 @@ class Tag(models.Model):
         ]
     )
     slug = models.SlugField(
-        'Слаг',
-        max_length=100,
+        'слаг',
+        max_length=MAX_NAME_LEN,
         unique=True,
         help_text='Введите уникальную строку'
     )
@@ -97,7 +98,7 @@ class Recipe(models.Model):
         help_text='Введите автора'
     )
     name = models.CharField(
-        'Название',
+        'название',
         max_length=256,
         db_index=True,
         help_text='Введите название рецепта'
@@ -115,18 +116,18 @@ class Recipe(models.Model):
         help_text='Укажите теги'
     )
     image = models.ImageField(
-        'Изображение',
+        'изображение',
         upload_to='recipe_images/%Y/%m/%d',
         default='static/images/DefaultCardImg.png',
         help_text='Добавьте изображение'
     )
     text = models.TextField(
-        'Описание',
+        'описание',
         max_length=1000,
         help_text='Введите описание рецепта'
     )
     cooking_time = models.PositiveSmallIntegerField(
-        'Время приготовления',
+        'время приготовления',
         null=False,
         validators=[
             MinValueValidator(
@@ -137,7 +138,7 @@ class Recipe(models.Model):
         help_text='Укажите время в минутах',
     )
     pub_date = models.DateTimeField(
-        'Дата публикации',
+        'дата публикации',
         auto_now_add=True,
         db_index=True
     )
@@ -169,7 +170,7 @@ class Amount(models.Model):
         verbose_name='Ингредиент',
     )
     amount = models.PositiveSmallIntegerField(
-        'Количество',
+        'количество',
         validators=[
             MinValueValidator(
                 1,

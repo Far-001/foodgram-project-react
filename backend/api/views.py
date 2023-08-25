@@ -9,15 +9,14 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import (
     SAFE_METHODS,
-    AllowAny,
     IsAuthenticated,
     IsAuthenticatedOrReadOnly
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from users.models import MyUser, Follow
-from app.models import Ingredient, Amount, Recipe, Tag
+from users.models import MyUser
+from recipes.models import Ingredient, Amount, Recipe, Tag
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import RestrictPagination
@@ -38,7 +37,7 @@ class MyUserViewSet(UserViewSet):
     """Операции с пользователями."""
     queryset = MyUser.objects.all()
     serializer_class = MyUserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     add_serializer = FollowSerializer
 
     @action(methods=['GET'],
@@ -63,24 +62,22 @@ class MyUserViewSet(UserViewSet):
         """Подписка на автора(отписка) для авторизованных пользователей."""
         user = self.request.user
         author = get_object_or_404(MyUser, id=id)
-        subscription = Follow.objects.filter(user=user, author=author)
-        subs_message = 'Нельзя подписаться. Уже подписаны!'
-        unsubs_message = 'Нельзя отписаться. Вы не подписаны!'
+        subscription = user.followers.filter(author=author)
 
         if request.method == 'POST':
             if subscription.exists():
                 return Response(
-                    {'error': subs_message},
+                    {'error': 'Нельзя подписаться. Уже подписаны!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             serializer = FollowSerializer(author, context={'request': request})
-            Follow.objects.create(user=user, author=author)
+            user.followers.create(author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
             if not subscription.exists():
                 return Response(
-                    {'error': unsubs_message},
+                    {'error': 'Нельзя отписаться. Вы не подписаны!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             subscription.delete()
@@ -132,7 +129,6 @@ class RecipeViewSet(ModelViewSet):
         queryset = serializer_class.Meta.model.objects.filter(
             user=user, recipe=recipe
         )
-        err_del_message = 'Нельзя удалить рецепт, который не добавлен.'
 
         if self.request.method == 'POST':
             serializer = serializer_class(
@@ -146,7 +142,7 @@ class RecipeViewSet(ModelViewSet):
         if self.request.method == 'DELETE':
             if not queryset.exists():
                 return Response(
-                    {'error': err_del_message},
+                    {'error': 'Нельзя удалить рецепт, который не добавлен.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
         queryset.delete()
@@ -170,10 +166,9 @@ class RecipeViewSet(ModelViewSet):
             pagination_class=None)
     def download_shopping_cart(self, request):
         """Добавление рецептов в список покупок."""
-        empty_message = 'В списке покупок пусто'
         user = request.user
         if not user.shopcarts.exists():
-            return Response({'error': empty_message},
+            return Response({'error': 'В списке покупок пусто'},
                             status=status.HTTP_204_NO_CONTENT)
         ingredient_list = Amount.objects.filter(
             recipe__shopcarts__user=user

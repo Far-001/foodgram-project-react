@@ -3,7 +3,7 @@ import csv
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from app.models import Ingredient
+from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
@@ -19,10 +19,10 @@ class Command(BaseCommand):
             ) as csv_file:
                 rows = csv.reader(csv_file)
                 for row in rows:
-                    name, units = row
+                    name, measurement_unit = row
                     Ingredient.objects.get_or_create(
                         name=name,
-                        units=units
+                        measurement_unit=measurement_unit
                     )
         except FileNotFoundError:
             raise CommandError('Нет файла ingredients.csv в каталоге data')
