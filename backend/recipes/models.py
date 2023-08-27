@@ -1,18 +1,16 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 
 User = get_user_model()
 
-RECIPE_SHOTNAME = 20
-MAX_NAME_LEN = 100
-
 
 class Ingredient(models.Model):
     """Модель ингредиента."""
     name = models.CharField(
         'название',
-        max_length=MAX_NAME_LEN,
+        max_length=settings.MAX_NAME_LEN,
         db_index=True,
         help_text='Введите название ингредиента'
     )
@@ -44,7 +42,7 @@ class Tag(models.Model):
     """
     name = models.CharField(
         'название',
-        max_length=MAX_NAME_LEN,
+        max_length=settings.MAX_NAME_LEN,
         db_index=True,
         unique=True
     )
@@ -62,7 +60,7 @@ class Tag(models.Model):
     )
     slug = models.SlugField(
         'слаг',
-        max_length=MAX_NAME_LEN,
+        max_length=settings.MAX_NAME_LEN,
         unique=True,
         help_text='Введите уникальную строку'
     )
@@ -149,7 +147,7 @@ class Recipe(models.Model):
         ordering = ('-pub_date',)
 
     def __str__(self):
-        return self.name[:RECIPE_SHOTNAME]
+        return self.name[:settings.RECIPE_SHOTNAME]
 
 
 class Amount(models.Model):

@@ -262,43 +262,43 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return RecipeListSerializer(instance, context=context).data
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+class BaseListSerializer(serializers.ModelSerializer):
+    """Базовый сериализатор изменения списка."""
+
+    def validate(self, data):
+        user = data.get('user')
+        recipe = data.get('recipe')
+        if self.Meta.model.objects.filter(user=user, recipe=recipe).exists():
+            error_message = self.get_error_message()
+            raise serializers.ValidationError(
+                {'error': error_message}
+            )
+        return data
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return SmallRecipeSerializer(instance.recipe, context=context).data
+
+    def get_error_message(self):
+        return 'Уже есть'
+
+
+class FavoriteSerializer(BaseListSerializer):
     """Сериализатор изменения списка избранных рецептов."""
     class Meta:
         model = Favorite
         fields = ('user', 'recipe')
 
-    def validate(self, data):
-        user = data.get('user')
-        recipe = data.get('recipe')
-        if user.favorites.filter(recipe=recipe).exists():
-            raise serializers.ValidationError(
-                {'error': 'Этот рецепт уже в избранных'}
-            )
-        return data
-
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        context = {'request': request}
-        return SmallRecipeSerializer(instance.recipe, context=context).data
+    def get_error_message(self):
+        return 'Этот рецепт уже в избранных'
 
 
-class ShoppingCartSerializer(FavoriteSerializer):
+class ShoppingCartSerializer(BaseListSerializer):
     """Сериализатор изменения списка покупок."""
     class Meta:
         model = ShoppingCart
         fields = ('user', 'recipe')
 
-    def validate(self, data):
-        user = data.get('user')
-        recipe = data.get('recipe')
-        if user.shopcarts.filter(recipe=recipe).exists():
-            raise serializers.ValidationError(
-                {'error': 'Этот рецепт уже в списке покупок'}
-            )
-        return data
-
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        context = {'request': request}
-        return SmallRecipeSerializer(instance.recipe, context=context).data
+    def get_error_message(self):
+        return 'Этот рецепт уже в списке покупок'

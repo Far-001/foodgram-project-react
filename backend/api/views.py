@@ -37,7 +37,7 @@ class MyUserViewSet(UserViewSet):
     """Операции с пользователями."""
     queryset = MyUser.objects.all()
     serializer_class = MyUserSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AuthorStaffOrReadOnly]
     add_serializer = FollowSerializer
 
     @action(methods=['GET'],
