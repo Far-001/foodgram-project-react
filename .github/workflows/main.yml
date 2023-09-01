@@ -8,10 +8,10 @@ on:
 jobs:
 
   build_and_push_to_docker_hub:
-    name: Push Docker image to Docker Hub
+    name: Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      - name: Check repo
         uses: actions/checkout@v2
 
       - name: Set up Docker Buildx
@@ -42,7 +42,7 @@ jobs:
     needs: build_and_push_to_docker_hub
     if: github.ref == 'refs/heads/master'
     steps:
-      - name: executing remote ssh commands to deploy
+      - name: remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -50,28 +50,19 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-
-            sudo rm .env
-            sudo touch .env
-            sudo chmod 666 .env
-
-            sudo echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
-            sudo echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-            sudo echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-            sudo echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-            sudo echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-            sudo echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            sudo echo DEBUG=${{ secrets.DEBUG }} >> .env
-            sudo echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            sudo echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
-            sudo echo MODE=${{ secrets.MODE }} >> .env
-
-            cd infra/
-            sudo docker pull farkor/foodgram_backend:latest
-            sudo docker pull farkor/foodgram_frontend:latest
             sudo docker-compose stop
             sudo docker-compose rm backend
-            sudo docker-compose up -d --build
+            sudo docker-compose rm frontend
+            touch .env
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+            echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+            echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+            
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+            sudo docker-compose up -d
 
   send_message:
     runs-on: ubuntu-latest
