@@ -1,4 +1,5 @@
 import csv
+import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -12,8 +13,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         try:
+            path = os.path.join(settings.BASE_DIR, 'ingredients.csv')
             with open(
-                f'{settings.BASE_DIR}/../data/ingredients.csv',
+                path,
                 'r',
                 encoding='utf-8'
             ) as csv_file:
