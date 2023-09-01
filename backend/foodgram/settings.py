@@ -2,6 +2,7 @@ import environ
 import os
 from pathlib import Path
 
+
 env = environ.Env(
     DEBUG=(bool, True),
     SECRET_KEY=(str, 'token')

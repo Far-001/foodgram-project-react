@@ -16,16 +16,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # update pip
           python -m pip install --upgrade pip
-          # install flake8 and plugins
           pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
-          # installing dependencies
           pip install -r backend/requirements.txt
 
       - name: Test with flake8
         run: |
-          # Launch project check with flake8
           python -m flake8
 
   build_and_push_to_docker_hub:
