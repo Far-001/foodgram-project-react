@@ -80,8 +80,8 @@ class MyUserViewSet(UserViewSet):
                     {'error': 'Нельзя отписаться. Вы не подписаны!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        subscription.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(ReadOnlyModelViewSet):
