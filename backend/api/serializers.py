@@ -1,14 +1,14 @@
-from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserSerializer
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.models import (
-    Recipe,
-    Ingredient,
     Amount,
-    Tag,
     Favorite,
-    ShoppingCart
+    Ingredient,
+    Recipe,
+    ShoppingCart,
+    Tag,
 )
 from users.models import MyUser
 
