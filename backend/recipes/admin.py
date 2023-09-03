@@ -1,13 +1,6 @@
-from django.contrib.admin import TabularInline, ModelAdmin, site
+from django.contrib.admin import ModelAdmin, TabularInline, site
 
-from .models import (
-    Recipe,
-    Ingredient,
-    Amount,
-    Tag,
-    Favorite,
-    ShoppingCart
-)
+from .models import Amount, Favorite, Ingredient, Recipe, ShoppingCart, Tag
 
 
 class AmountInline(TabularInline):

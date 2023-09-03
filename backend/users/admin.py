@@ -1,8 +1,8 @@
+from django.contrib.admin import site
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from django.contrib.admin import site
 
-from .models import MyUser, Follow
+from .models import Follow, MyUser
 
 
 class MyUserAdmin(UserAdmin):

@@ -1,14 +1,14 @@
 from django.contrib.auth.models import AbstractUser
-from rest_framework.exceptions import ValidationError
 from django.db.models import (
-    Model,
+    CASCADE,
+    BooleanField,
     CharField,
     EmailField,
     ForeignKey,
+    Model,
     UniqueConstraint,
-    BooleanField,
-    CASCADE
 )
+from rest_framework.exceptions import ValidationError
 
 
 class MyUser(AbstractUser):
