@@ -57,7 +57,7 @@ class MyUserSerializer(UserSerializer):
 
 class FollowSerializer(serializers.ModelSerializer):
     """Сериализатор управления подписками."""
-    recipes = SmallRecipeSerializer(read_only=True, many=True)
+    recipes = serializers.SerializerMethodField(read_only=True)
     recipes_count = serializers.SerializerMethodField(read_only=True)
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
@@ -74,6 +74,10 @@ class FollowSerializer(serializers.ModelSerializer):
         if user.is_anonymous:
             return False
         return obj.followings.filter(user=user).exists()
+
+    def get_recipes(self, obj):
+        recipes = obj.recipes.all()[:3]
+        return SmallRecipeSerializer(recipes, many=True, context=self.context).data
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
