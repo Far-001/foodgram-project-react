@@ -10,7 +10,7 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
-from users.models import Follow, MyUser
+from users.models import MyUser, Follow
 
 
 class SmallRecipeSerializer(serializers.ModelSerializer):
@@ -52,7 +52,7 @@ class MyUserSerializer(UserSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Follow.objects.filter(user=user, author=obj.id).exists()
+        return user.followings.filter(author=obj.id).exists()
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -73,7 +73,7 @@ class FollowSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Follow.objects.filter(user=user, author=obj.id).exists()
+        return user.followings.filter(author=obj.id).exists()
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
