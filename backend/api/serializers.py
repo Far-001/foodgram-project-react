@@ -10,7 +10,7 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
-from users.models import MyUser, Follow
+from users.models import Follow, MyUser
 
 
 class SmallRecipeSerializer(serializers.ModelSerializer):
