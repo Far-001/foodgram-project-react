@@ -77,7 +77,11 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         recipes = obj.recipes.all()[:3]
-        return SmallRecipeSerializer(recipes, many=True, context=self.context).data
+        return SmallRecipeSerializer(
+            recipes,
+            many=True,
+            context=self.context
+        ).data
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
